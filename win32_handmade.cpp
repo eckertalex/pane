@@ -131,7 +131,7 @@ Win32MainWindowCallback(
             } break;
         case WM_ACTIVATEAPP:
             {
-                OutputDebugStringA("WM_ACTIVATEAPP\n");
+                OutputDebugString("WM_ACTIVATEAPP\n");
             } break;
         case WM_DESTROY:
             {
@@ -174,10 +174,10 @@ WinMain(HINSTANCE Instance,
     WindowClass.hInstance = Instance;
     WindowClass.lpszClassName = "HandmadeHeroWindowClass";
 
-    if(RegisterClassA(&WindowClass))
+    if(RegisterClass(&WindowClass))
     {
         HWND Window =
-            CreateWindowExA(
+            CreateWindowEx(
                 0,
                 WindowClass.lpszClassName,
                 "Handmade Hero",
@@ -207,7 +207,7 @@ WinMain(HINSTANCE Instance,
                     }
 
                     TranslateMessage(&Message);
-                    DispatchMessageA(&Message);
+                    DispatchMessage(&Message);
                 }
 
                 RenderWeirdGradient(GlobalBackBuffer, XOffset, YOffset);
