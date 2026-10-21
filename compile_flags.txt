@@ -1,0 +1,8 @@
+-std=c23
+-Isrc
+-Wall
+-Wextra
+-Wpedantic
+-Wshadow
+-Wconversion
+-Wundef

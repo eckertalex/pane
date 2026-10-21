@@ -1,0 +1,42 @@
+#ifndef BASE_CORE_H
+#define BASE_CORE_H
+
+#include <stdint.h>
+
+#define internal static
+#define global static
+#define local_persist static
+
+typedef uint8_t u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+typedef uint64_t u64;
+
+typedef int8_t i8;
+typedef int16_t i16;
+typedef int32_t i32;
+typedef int64_t i64;
+
+typedef float f32;
+typedef double f64;
+
+#define ArrayCount(a) (sizeof(a) / sizeof((a)[0]))
+#define MB(n) ((u64)(n) << 20)
+#define AlignPow2(x, b) (((x) + (b) - 1) & ~((b) - 1))
+
+#if COMPILER_MSVC
+# define Trap() __debugbreak()
+#elif COMPILER_CLANG || COMPILER_GCC
+# define Trap() __builtin_trap()
+#else
+# error Unknown trap intrinsic for this compiler.
+#endif
+
+#define AssertAlways(x) do{if(!(x)) {Trap();}}while(0)
+#if BUILD_DEBUG
+# define Assert(x) AssertAlways(x)
+#else
+# define Assert(x) (void)(x)
+#endif
+
+#endif // BASE_CORE_H
