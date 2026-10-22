@@ -8,3 +8,7 @@ trim_trailing_whitespace = true
 [*.{c,h,m}]
 indent_style = space
 indent_size = 4
+
+[*.odin]
+indent_style = tab
+indent_size = 4

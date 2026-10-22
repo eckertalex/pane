@@ -1,0 +1,35 @@
+# experiments/ are separate projects with their own config
+If:
+  PathExclude: experiments/.*
+Diagnostics:
+  UnusedIncludes: None
+  MissingIncludes: None
+  # Single files opened alone in the editor do not see the rest of the unity
+  # build. The real build still reports these.
+  Suppress: [undefined-internal]
+CompileFlags:
+  Add: [--include=base/base_inc.h, --include=window_manager/window_manager.h]
+---
+# Files that pull in the Cocoa backend through the unity build. clangd cannot
+# tell which OS it runs on, so this is scoped by path. On Linux and Windows
+# pane_main.c still parses as Objective-C, a superset of C, which is harmless
+# because the Cocoa code is behind #if OS_MAC.
+If:
+  PathMatch:
+    [
+      src/mac/.*,
+      src/pane/pane_main\.c,
+      src/window_manager/window_manager_inc\..*,
+    ]
+CompileFlags:
+  Add: [-xobjective-c, --include=window_manager/window_manager_inc.h]
+---
+If:
+  PathMatch: src/win32/.*
+CompileFlags:
+  Add: [--include=window_manager/window_manager_inc.h]
+---
+If:
+  PathMatch: src/linux/.*
+CompileFlags:
+  Add: [--include=window_manager/window_manager_inc.h]
