@@ -5,7 +5,7 @@
 #elif OS_WINDOWS
 # include "win32/window_manager/win32_window_manager.c"
 #elif OS_LINUX
-# include "x11/window_manager/x11_window_manager.c"
+# include "linux/window_manager/x11/x11_window_manager.c"
 #else
 # error window_manager: no backend for this OS yet
 #endif

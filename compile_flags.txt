@@ -6,3 +6,5 @@
 -Wshadow
 -Wconversion
 -Wundef
+-Wno-unused-function
+-D_GNU_SOURCE

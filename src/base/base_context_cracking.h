@@ -4,7 +4,7 @@
 #if defined(__clang__)
 # define COMPILER_CLANG 1
 #elif defined(_MSC_VER)
-# define COMPILER_MSVC 1
+# error MSVC is not supported, it lacks the C23 features this codebase uses. Use clang.
 #elif defined(__GNUC__)
 # define COMPILER_GCC 1
 #else
@@ -35,9 +35,6 @@
 
 #if !defined(COMPILER_CLANG)
 # define COMPILER_CLANG 0
-#endif
-#if !defined(COMPILER_MSVC)
-# define COMPILER_MSVC 0
 #endif
 #if !defined(COMPILER_GCC)
 # define COMPILER_GCC 0

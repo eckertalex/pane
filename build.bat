@@ -2,25 +2,35 @@
 setlocal
 
 cd /d "%~dp0"
-if not exist build mkdir build
 
-if not defined CC set CC=clang
+:: --- Unpack Arguments --------------------------------------------------------
+:: clang is the only compiler on Windows, MSVC lacks the C23 features we use
+set mode=debug
+for %%a in (%*) do (
+    if "%%~a"=="debug" (
+        set mode=debug
+    ) else if "%%~a"=="release" (
+        set mode=release
+    ) else if not "%%~a"=="clang" (
+        echo usage: %~nx0 [debug^|release] [clang] 1>&2
+        exit /b 1
+    )
+)
 
-set mode=%1
-if "%mode%"=="" set mode=debug
-
+:: --- Choose Mode -------------------------------------------------------------
+echo [clang compile]
 if "%mode%"=="debug" (
     echo [debug mode]
     set mode_flags=-O0 -g -DBUILD_DEBUG=1
     set link_flags=
-) else if "%mode%"=="release" (
+) else (
     echo [release mode]
     set mode_flags=-O2 -g -DBUILD_DEBUG=0
     rem No console window, but keep main as the entry point
     set link_flags=-Wl,/subsystem:windows -Wl,/entry:mainCRTStartup
-) else (
-    echo usage: %~nx0 [debug^|release] 1>&2
-    exit /b 1
 )
 
-%CC% @compile_flags.txt %mode_flags% src\pane\pane_main.c -o build\pane.exe -luser32 %link_flags%
+:: --- Build -------------------------------------------------------------------
+:: Libraries are linked with #pragma comment(lib, ...) next to the code using them
+if not exist build mkdir build
+clang @compile_flags.txt %mode_flags% src\pane\pane_main.c -o build\pane.exe %link_flags%

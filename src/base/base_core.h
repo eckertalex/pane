@@ -2,6 +2,9 @@
 #define BASE_CORE_H
 
 #include <stdint.h>
+#include <stdio.h>
+#include <stdckdint.h>
+#include <string.h>
 
 #define internal static
 #define global static
@@ -21,18 +24,23 @@ typedef float f32;
 typedef double f64;
 
 #define ArrayCount(a) (sizeof(a) / sizeof((a)[0]))
+#define KB(n) ((u64)(n) << 10)
 #define MB(n) ((u64)(n) << 20)
+#define GB(n) ((u64)(n) << 30)
 #define AlignPow2(x, b) (((x) + (b) - 1) & ~((b) - 1))
 
-#if COMPILER_MSVC
-# define Trap() __debugbreak()
-#elif COMPILER_CLANG || COMPILER_GCC
-# define Trap() __builtin_trap()
-#else
-# error Unknown trap intrinsic for this compiler.
-#endif
+#define MemoryCopy(dst, src, size) memmove((dst), (src), (size))
+#define MemorySet(dst, byte, size) memset((dst), (byte), (size))
+#define MemoryZero(dst, size) memset((dst), 0, (size))
 
-#define AssertAlways(x) do{if(!(x)) {Trap();}}while(0)
+#define Trap() __builtin_trap()
+
+#define AssertAlways(x)                                                        \
+    do {                                                                       \
+        if (!(x)) {                                                            \
+            Trap();                                                            \
+        }                                                                      \
+    } while (0)
 #if BUILD_DEBUG
 # define Assert(x) AssertAlways(x)
 #else
