@@ -37,7 +37,7 @@ case "$mode" in
         ;;
     release)
         echo "[release mode]"
-        MODE_FLAGS="-o:speed -disable-assert"
+        MODE_FLAGS="-o:speed"
         ;;
 esac
 

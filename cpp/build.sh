@@ -18,7 +18,7 @@ for arg in "$@"; do
 done
 
 # --- Compile/Link Line Definitions -------------------------------------------
-FLAGS="$(cat compile_flags.txt)"
+FLAGS="-xc++ -std=c++20 -fno-exceptions -fno-rtti -Isrc -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wundef -Wno-unused-function -D_GNU_SOURCE"
 
 PLATFORM_FLAGS=""
 LIBS=""

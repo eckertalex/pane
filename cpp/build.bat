@@ -18,6 +18,8 @@ for %%a in (%*) do (
 )
 
 :: --- Choose Mode -------------------------------------------------------------
+set flags=-xc++ -std=c++20 -fno-exceptions -fno-rtti -Isrc -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wundef -Wno-unused-function -D_GNU_SOURCE
+
 echo [clang++ compile]
 if "%mode%"=="debug" (
     echo [debug mode]
@@ -33,4 +35,4 @@ if "%mode%"=="debug" (
 :: --- Build -------------------------------------------------------------------
 :: Libraries are linked with #pragma comment(lib, ...) next to the code using them
 if not exist build mkdir build
-clang++ @compile_flags.txt %mode_flags% src\pane\pane_main.cpp -o build\pane.exe %link_flags%
+clang++ %flags% %mode_flags% src\pane\pane_main.cpp -o build\pane.exe %link_flags%

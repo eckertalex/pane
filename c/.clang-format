@@ -1,9 +1,0 @@
-BasedOnStyle: LLVM
-IndentWidth: 4
-ColumnLimit: 80
-# Nested preprocessor lines read as `# define`, like base_context_cracking.h
-IndentPPDirectives: AfterHash
-PPIndentWidth: 1
-AllowShortFunctionsOnASingleLine: Empty
-# The unity build depends on include order, never reorder
-SortIncludes: Never
