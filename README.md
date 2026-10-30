@@ -34,8 +34,21 @@
 
 ## Build
 
-- `<version>/build.sh [debug|release]`
-- `<version>\build.bat [debug|release]`
+Each folder has a `build.sh` (and `build.bat` for Windows) that builds into its own `build/` folder.
+
+```sh
+./build.sh                  # c, cpp and odin, debug
+./build.sh release          # c, cpp and odin, release
+./build.sh odin             # name versions first to pick them
+
+c/build.sh release          # c/build/pane
+cpp/build.sh release        # cpp/build/pane
+odin/build.sh release       # odin/build/pane
+```
+
+Every `build.sh` takes `debug` (the default) or `release`. C uses clang unless `CC` says otherwise, C++ uses clang++ unless `CXX` does, e.g. `CC=gcc c/build.sh`.
+
+On Windows, `build.bat` takes the same `debug`/`release`, with clang only.
 
 ## Options considered
 

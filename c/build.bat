@@ -3,7 +3,7 @@ setlocal
 
 cd /d "%~dp0"
 
-:: --- Unpack Arguments --------------------------------------------------------
+:: --- Arguments ---------------------------------------------------------------
 :: clang is the only compiler on Windows, MSVC lacks the C23 features we use
 set mode=debug
 for %%a in (%*) do (
@@ -11,28 +11,29 @@ for %%a in (%*) do (
         set mode=debug
     ) else if "%%~a"=="release" (
         set mode=release
-    ) else if not "%%~a"=="clang" (
-        echo usage: %~nx0 [debug^|release] [clang] 1>&2
-        exit /b 1
+    ) else (
+        echo usage: %~nx0 [debug^|release] 1>&2
+        exit /b 2
     )
 )
 
-:: --- Choose Mode -------------------------------------------------------------
-set flags=-std=c23 -Isrc -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wundef -Wno-unused-function -D_GNU_SOURCE
+:: --- Flags -------------------------------------------------------------------
+set cc_common=-std=c23 -Isrc -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wundef -Wno-unused-function -D_GNU_SOURCE
+set cc_debug=-O0 -g -DBUILD_DEBUG=1
+set cc_release=-O2 -g -DBUILD_DEBUG=0
+:: No console window in release, but keep main as the entry point
+set link_release=-Wl,/subsystem:windows -Wl,/entry:mainCRTStartup
 
-echo [clang compile]
+:: --- Choose Flags ------------------------------------------------------------
 if "%mode%"=="debug" (
-    echo [debug mode]
-    set mode_flags=-O0 -g -DBUILD_DEBUG=1
+    set compile=clang %cc_common% %cc_debug%
     set link_flags=
 ) else (
-    echo [release mode]
-    set mode_flags=-O2 -g -DBUILD_DEBUG=0
-    rem No console window, but keep main as the entry point
-    set link_flags=-Wl,/subsystem:windows -Wl,/entry:mainCRTStartup
+    set compile=clang %cc_common% %cc_release%
+    set link_flags=%link_release%
 )
 
 :: --- Build -------------------------------------------------------------------
 :: Libraries are linked with #pragma comment(lib, ...) next to the code using them
 if not exist build mkdir build
-clang %flags% %mode_flags% src\pane\pane_main.c -o build\pane.exe %link_flags%
+%compile% src\pane\pane_main.c -o build\pane.exe %link_flags% || exit /b 1

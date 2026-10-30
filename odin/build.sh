@@ -1,21 +1,19 @@
 #!/bin/sh
+# usage: ./build.sh [debug|release]
 set -eu
 
 cd "$(dirname "$0")"
 
-# --- Unpack Arguments --------------------------------------------------------
-mode="debug"
-for arg in "$@"; do
-    case "$arg" in
-        debug|release) mode="$arg" ;;
-        *)
-            echo "usage: $0 [debug|release]" >&2
-            exit 1
-            ;;
-    esac
-done
+flags="-vet"
+case "${1:-debug}" in
+    debug) flags="$flags -debug -o:none" ;;
+    release) flags="$flags -o:speed" ;;
+    *)
+        echo "usage: $0 [debug|release]" >&2
+        exit 2
+        ;;
+esac
 
-# --- Platform ----------------------------------------------------------------
 case "$(uname -s)" in
     Darwin) ;;
     Linux)
@@ -29,18 +27,5 @@ case "$(uname -s)" in
         ;;
 esac
 
-# --- Choose Mode -------------------------------------------------------------
-case "$mode" in
-    debug)
-        echo "[debug mode]"
-        MODE_FLAGS="-debug -o:none"
-        ;;
-    release)
-        echo "[release mode]"
-        MODE_FLAGS="-o:speed"
-        ;;
-esac
-
-# --- Build -------------------------------------------------------------------
 mkdir -p build
-odin build src/pane -out:build/pane -vet $MODE_FLAGS
+odin build src/pane -out:build/pane $flags

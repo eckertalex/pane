@@ -3,7 +3,7 @@ setlocal
 
 cd /d "%~dp0"
 
-:: --- Unpack Arguments --------------------------------------------------------
+:: --- Arguments ---------------------------------------------------------------
 set mode=debug
 for %%a in (%*) do (
     if "%%~a"=="debug" (
@@ -12,20 +12,23 @@ for %%a in (%*) do (
         set mode=release
     ) else (
         echo usage: %~nx0 [debug^|release] 1>&2
-        exit /b 1
+        exit /b 2
     )
 )
 
-:: --- Choose Mode -------------------------------------------------------------
+:: --- Flags -------------------------------------------------------------------
+set flags_common=-vet
+set flags_debug=-debug -o:none
+:: No console window in release
+set flags_release=-o:speed -disable-assert -subsystem:windows
+
+:: --- Choose Flags ------------------------------------------------------------
 if "%mode%"=="debug" (
-    echo [debug mode]
-    set mode_flags=-debug -o:none
+    set flags=%flags_common% %flags_debug%
 ) else (
-    echo [release mode]
-    rem No console window
-    set mode_flags=-o:speed -disable-assert -subsystem:windows
+    set flags=%flags_common% %flags_release%
 )
 
 :: --- Build -------------------------------------------------------------------
 if not exist build mkdir build
-odin build src\pane -out:build\pane.exe -vet %mode_flags%
+odin build src\pane -out:build\pane.exe %flags% || exit /b 1
